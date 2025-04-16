@@ -21,3 +21,10 @@
     método abstracto:
      R apply(T t);
 
+### Optional
+    Es un objeto contenedor que puede o no tener un valor, esto nos ayuda mucho con el NullPointerException, sirve para cuando manejamos los streams
+
+
+# API Stream
+
+###
