@@ -3,34 +3,89 @@ package com.funcional.funcional.stream;
 import com.funcional.modelos.Album;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 public class StreamApp {
 
     public static void main (String[] args) {
-        streamFilter(createListAlbum(), "rock");
+        List<Album> albums = createListAlbum();
+        streamFilter(albums, "rock");
         log.warn("#####################################################");
-        streamInverse(createListAlbum());
+        streamInverse(albums);
+        log.warn("#####################################################");
+        streamMaxMin(albums);
+        log.warn("#####################################################");
+        streamSummary(albums);
+        log.warn("#####################################################");
+        streamAnyMatch(albums);
+        log.warn("#####################################################");
+        streamMap(albums);
     }
 
     public static void streamFilter(List<Album> albums, String genero) {
+        /**
+         * El metodo filter recibe un Predicado
+         */
         Predicate<Album> fx = album -> album.getGenero().equalsIgnoreCase(genero);
-        //List<Album> albumsFiltered = albums.stream().filter(fx).toList();//jdk 16 toList()
-        List<Album> filteredAlbums = albums.stream().filter(fx).collect(Collectors.toList()); //jdk 1.8
+        List<Album> filteredAlbums = albums.stream().filter(fx).toList();//jdk 16 toList()
+        //List<Album> filteredAlbums = albums.stream().filter(fx).collect(Collectors.toList()); //jdk 1.8
         filteredAlbums.forEach(System.out::println);
 
     }
 
     public static void streamInverse(List<Album> albums) {
-        albums.stream().sorted(Comparator.comparing(Album::getAnio)).forEach(System.out::println);
+        /***
+         * El metodo sorter recibe un Comparator
+         * Comparator es una function, recordemos que una function
+         * recbe un objeto y regresa otro , o puede ser el mismo, en este
+         * caso recibe un Album y regresa el anio
+         */
+
+        albums.stream().sorted(Comparator.comparing(Album::getAnio).reversed()).forEach(System.out::println);
     }
 
-    private static List<Album> createListAlbum() {
+    public static void streamMaxMin(List<Album> albums) {
+        int maxYear = albums.stream().map(Album::getAnio).max(Integer::compareTo).get();
+        int minYear = albums.stream().map(Album::getAnio).min(Integer::compareTo).get();
+        OptionalDouble avgYear = albums.stream().mapToInt(Album::getAnio).average();
+
+        log.info("Max year: {}", maxYear);
+        log.info("Min year: {}", minYear);
+        log.info("Average year: {}", avgYear.getAsDouble());
+    }
+
+    public static void streamSummary(List<Album> albums) {
+        /***
+         *   El objeto IntsummaryStatistics regresa el min, max y el promedio
+         */
+        var summary = albums.stream().mapToInt(Album::getAnio).summaryStatistics();
+        log.info("Summary: {}", summary);
+    }
+
+    public static void streamAnyMatch(List<Album> albums) {
+        /**
+         * Con anyMatch se verifica que aunque sea un elemento cumpla con el predicado
+         */
+        var bool= albums.stream().anyMatch(a -> a.getAnio() == 2);
+        log.info("anyMatch value is : {} ", bool);
+    }
+
+    public static void streamMap(List<Album> albums) {
+        /***
+         * Map es de los mas usados, map recibe un objeto y regresa otro objeto
+         * ya que recibe una function
+         */
+        albums.stream().map(s -> {
+            s.setAnio(s.getAnio() + 1);
+            return s;
+        }).forEach(System.out::println);
+
+    }
+
+    private  static List<Album> createListAlbum() {
         Album album = new Album("THRILLER", "MICHAEL JACKSON", 1982 ,"POP");
         Album album2 = new Album("BACK IN BLACK", "AC/DC", 1980 ,"ROCK");
         Album album3 = new Album("THE DARK SIDE OF THE MOON", "PINK FLOYD", 1973 ,"ROCK");
