@@ -3,8 +3,11 @@ package com.funcional.funcional.stream;
 import com.funcional.modelos.Album;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Slf4j
@@ -23,6 +26,10 @@ public class StreamApp {
         streamAnyMatch(albums);
         log.warn("#####################################################");
         streamMap(albums);
+        log.warn("#####################################################");
+        streamFlatMap(albums);
+        log.warn("#####################################################");
+        streamGroupBy(albums);
     }
 
     public static void streamFilter(List<Album> albums, String genero) {
@@ -82,6 +89,32 @@ public class StreamApp {
             s.setAnio(s.getAnio() + 1);
             return s;
         }).forEach(System.out::println);
+
+    }
+
+    public static void streamFlatMap(List<Album> albums) {
+        /***
+         * Map es de los mas usados, map recibe un objeto y regresa otro objeto
+         * ya que recibe una function
+         */
+        albums.stream().flatMap(a -> {
+            a.setAnio(a.getAnio() + 1);
+            return Stream.of(a.getBanda(), a.getAnio());
+        }).forEach(e -> {
+            System.out.println("La banda es: " + ((Serializable) e).toString());
+        });
+    }
+
+    public static void streamGroupBy(List<Album> albums) {
+        /***
+         * Al igual que las BD el groupingBy agrupa bajo un criterio
+         * el retorno de esta funcion es un mapa siendo Map<Filtro(Object), ObjectoAgrupado>, se pueden ir
+         * agurpado por varios filtros , solo que la estructura de retorno se va aninando Map<Filtro, Map<Filtro, Objeto>>
+         */
+        Map<String, List<Album>> map = albums.stream().collect(Collectors.groupingBy(Album::getGenero));
+        Map<String, Map<String,List<Album>>> map2 = albums.stream().collect(Collectors.groupingBy(Album::getGenero, Collectors.groupingBy(Album::getBanda)));
+        System.out.println(map);
+        System.out.println(map2);
 
     }
 
