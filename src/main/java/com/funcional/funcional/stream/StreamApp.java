@@ -1,6 +1,8 @@
 package com.funcional.funcional.stream;
 
 import com.funcional.modelos.Album;
+import com.funcional.modelos.Database;
+import com.funcional.modelos.Videogame;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -15,6 +17,10 @@ public class StreamApp {
 
     public static void main (String[] args) {
         List<Album> albums = createListAlbum();
+
+
+        streamConstructor();
+        log.warn("#####################################################");
         streamFilter(albums, "rock");
         log.warn("#####################################################");
         streamInverse(albums);
@@ -25,11 +31,23 @@ public class StreamApp {
         log.warn("#####################################################");
         streamAnyMatch(albums);
         log.warn("#####################################################");
+        streamNoneMatch(albums);
+        log.warn("#####################################################");
+        streamAllMatch(albums);
+        log.warn("#####################################################");
         streamMap(albums);
         log.warn("#####################################################");
         streamFlatMap(albums);
         log.warn("#####################################################");
         streamGroupBy(albums);
+    }
+
+    public static void streamConstructor(){
+        /**
+         * Se genera el stream
+         * */
+        Stream<Videogame> stream = Database.videogames.stream();
+        stream.forEach(System.out::println);
     }
 
     public static void streamFilter(List<Album> albums, String genero) {
@@ -76,8 +94,21 @@ public class StreamApp {
         /**
          * Con anyMatch se verifica que aunque sea un elemento cumpla con el predicado
          */
-        var bool= albums.stream().anyMatch(a -> a.getAnio() == 2);
+        var bool= albums.stream().anyMatch(a -> a.getAnio() == 2007);
         log.info("anyMatch value is : {} ", bool);
+    }
+
+    public static void streamAllMatch(List<Album> albums) {
+        /**
+         * Con allMatch se verifica que todos los elementos cumplan con el predicado
+         */
+        var bool= albums.stream().allMatch(a -> a.getAnio() == 1980);
+        log.info("allMatch value is : {} ", bool);
+    }
+
+    public static void streamNoneMatch(List<Album> albums) {
+        var bool= albums.stream().noneMatch(a -> a.getAnio() == 2015);
+        log.info("noneMatch value is : {} ", bool);
     }
 
     public static void streamMap(List<Album> albums) {
