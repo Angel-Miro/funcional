@@ -2,6 +2,7 @@ package com.funcional.funcional.stream;
 
 import com.funcional.modelos.Album;
 import com.funcional.modelos.Database;
+import com.funcional.modelos.Review;
 import com.funcional.modelos.Videogame;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,9 +36,17 @@ public class StreamApp {
         log.warn("#####################################################");
         streamAllMatch(albums);
         log.warn("#####################################################");
+        streamFindFisrt(albums);
+        log.warn("#####################################################");
+        streamReduce();
+        log.warn("#####################################################");
         streamMap(albums);
         log.warn("#####################################################");
         streamFlatMap(albums);
+        log.warn("#####################################################");
+        streamPeek();
+        log.warn("#####################################################");
+        streamSort();
         log.warn("#####################################################");
         streamGroupBy(albums);
     }
@@ -50,6 +59,7 @@ public class StreamApp {
         stream.forEach(System.out::println);
     }
 
+    //Intermedio
     public static void streamFilter(List<Album> albums, String genero) {
         /**
          * El metodo filter recibe un Predicado
@@ -72,6 +82,12 @@ public class StreamApp {
         albums.stream().sorted(Comparator.comparing(Album::getAnio).reversed()).forEach(System.out::println);
     }
 
+    public static void streamSort(){
+        var list = Database.videogames.stream().sorted(Comparator.comparing(v -> v.getReviews().size())).collect(Collectors.toList());
+        log.info("El valor de list ordenada es : {}", list);
+    }
+
+    //final
     public static void streamMaxMin(List<Album> albums) {
         int maxYear = albums.stream().map(Album::getAnio).max(Integer::compareTo).get();
         int minYear = albums.stream().map(Album::getAnio).min(Integer::compareTo).get();
@@ -90,6 +106,7 @@ public class StreamApp {
         log.info("Summary: {}", summary);
     }
 
+    //final
     public static void streamAnyMatch(List<Album> albums) {
         /**
          * Con anyMatch se verifica que aunque sea un elemento cumpla con el predicado
@@ -98,6 +115,7 @@ public class StreamApp {
         log.info("anyMatch value is : {} ", bool);
     }
 
+    //final
     public static void streamAllMatch(List<Album> albums) {
         /**
          * Con allMatch se verifica que todos los elementos cumplan con el predicado
@@ -106,11 +124,13 @@ public class StreamApp {
         log.info("allMatch value is : {} ", bool);
     }
 
+    //final
     public static void streamNoneMatch(List<Album> albums) {
         var bool= albums.stream().noneMatch(a -> a.getAnio() == 2015);
         log.info("noneMatch value is : {} ", bool);
     }
 
+    //intermedio
     public static void streamMap(List<Album> albums) {
         /***
          * Map es de los mas usados, map recibe un objeto y regresa otro objeto
@@ -123,10 +143,10 @@ public class StreamApp {
 
     }
 
+    //intermedio
     public static void streamFlatMap(List<Album> albums) {
         /***
-         * Map es de los mas usados, map recibe un objeto y regresa otro objeto
-         * ya que recibe una function
+         * flatMap es para trabajar listas de listas, o stream embebido de streams
          */
         albums.stream().flatMap(a -> {
             a.setAnio(a.getAnio() + 1);
@@ -134,6 +154,13 @@ public class StreamApp {
         }).forEach(e -> {
             System.out.println("La banda es: " + ((Serializable) e).toString());
         });
+
+
+        var reviews = Database.videogames.stream().flatMap(v -> v.getReviews().stream()).collect(Collectors.toList());
+        log.info("La lista de reviews usando flatMap: {}", reviews);
+
+        var totalReviews = Database.videogames.stream().flatMap(v -> v.getReviews().stream()).count();
+        log.info("El total de reviews es: {}", totalReviews);
     }
 
     public static void streamGroupBy(List<Album> albums) {
@@ -149,6 +176,25 @@ public class StreamApp {
 
     }
 
+    public static void streamFindFisrt(List<Album> albums) {
+        Optional<Album> album = albums.stream().findFirst();
+        log.info("findFirst Method result : {}", album);
+        album.ifPresent(System.out::println);
+    }
+
+    public static void streamReduce() {
+        List<Videogame> videogames = Database.videogames.stream().collect(Collectors.toList());
+        Optional<Integer> ventas = videogames.stream()
+                                             .filter(Videogame::getIsDiscount)
+                                             .map(Videogame::getTotalSold)
+                                             .reduce(Integer::sum);
+        log.info("Total sold values using .reduce() : {}", ventas);
+    }
+
+    public static void streamPeek(){
+        List<Videogame> videogames = Database.videogames.stream().collect(Collectors.toList());
+        videogames.stream().peek(v -> v.setName("")).forEach(System.out::println);
+    }
     private  static List<Album> createListAlbum() {
         Album album = new Album("THRILLER", "MICHAEL JACKSON", 1982 ,"POP");
         Album album2 = new Album("BACK IN BLACK", "AC/DC", 1980 ,"ROCK");

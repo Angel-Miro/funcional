@@ -32,6 +32,20 @@
 # **API Stream**
     API Stream se utiliza para procesar colecciones de objetos. Un flujo en Java es una secuencia de objetos que admite varios métodos que pueden canalizarse para producir el resultado deseado.
 
+
+# **Collectors**
+    Son operaciones de recolección, utiles para acumular elementos en colecciones, método collect()
+
+    stream.collect(Collectors.toList())
+    stream.collect(Collectors.toSet())
+    stream.distinct().collect(Collectors.toMap(Videogame::getName, Videogame::getPrice))
+
+    Para listas no modificales: 
+    stream.collect(Collectors.toUnmodifiableList())
+    stream.collect(Collectors.toUnmodifiableSet())
+    stream.distinct().collect(Collectors.toUnmodifiableMap(Videogame::getName, Videogame::getPrice))
+
+
 # **Nuevas Funciones JDK 17** 
 -    **Java Records**: Genera automáticamente getters, métodos toString, equals y hashCode y un constructor. Los atributos serán finales
 
