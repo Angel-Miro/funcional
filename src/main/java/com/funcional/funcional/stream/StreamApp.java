@@ -156,7 +156,7 @@ public class StreamApp {
         });
 
 
-        var reviews = Database.videogames.stream().flatMap(v -> v.getReviews().stream()).collect(Collectors.toList());
+        var reviews = Database.videogames.stream().flatMap(v -> v.getReviews().stream()).toList();
         log.info("La lista de reviews usando flatMap: {}", reviews);
 
         var totalReviews = Database.videogames.stream().flatMap(v -> v.getReviews().stream()).count();

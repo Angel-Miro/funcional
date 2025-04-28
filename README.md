@@ -27,6 +27,9 @@
 
 ### **Optional**
     Es un objeto contenedor que puede o no tener un valor, esto nos ayuda mucho con el NullPointerException, sirve para cuando manejamos los streams
+    Optional.of()
+    Optional.ofNullable()
+    Optional.empty()
 
 
 # **API Stream**

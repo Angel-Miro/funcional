@@ -31,18 +31,30 @@ public class CollectorsApp {
     }
 
     static Map<String, Double> generateMap(Stream<Videogame> stream){
+        /**
+         * Se puede generar un mapa a traves de un stream
+         * */
         return stream.distinct().collect(Collectors.toMap(Videogame::getName, Videogame::getPrice));
     }
 
     static Map<Boolean, List<Videogame>> partition(Stream<Videogame> stream){
+        /***
+         *Se puede generar un mapa a partir de cierto criterio
+         */
         return stream.collect(Collectors.partitioningBy(v -> v.getPrice() > 15.0));
     }
 
     static Map<Console, List<Videogame>> grupingBy(Stream<Videogame> stream){
+        /**
+         * Se puede emular el gruping by de una bd
+         * */
         return stream.collect(Collectors.groupingBy(Videogame::getConsole));
     }
 
     static Map<Console, IntSummaryStatistics> groupingByAndSum(Stream<Videogame> stream){
+        /**
+         * Se puede emuilar el grouping by y un having count con el stream
+         * */
         return stream.collect(Collectors.groupingBy(Videogame::getConsole, Collectors.summarizingInt(Videogame::getTotalSold)));
     }
 }
